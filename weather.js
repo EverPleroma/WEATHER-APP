@@ -70,7 +70,11 @@ function printDataOnUI(weatherInfo){
 
     let humidity = weatherInfo.main.humidity
     humidity = humidity.toFixed()
+
     let feelsLike = weatherInfo.main.feels_like
+    let convFeel = feelsLike - 273.15
+    convFeel = (temperature -275.15).toFixed()
+
     let wind_Speed = weatherInfo.wind.speed
     
 
@@ -132,7 +136,7 @@ function printDataOnUI(weatherInfo){
     weatherFeelP.textContent = "FeelsLike:"
 
     let weatherFeelH1 = document.createElement("h1")
-    weatherFeelH1.textContent = `${feelsLike}%`
+    weatherFeelH1.textContent = `${convFeel}%`
 
     // Wind
     let windSpeed = document.createElement("div")
@@ -142,7 +146,7 @@ function printDataOnUI(weatherInfo){
     windSpeedP.textContent = "Wind Speed:"
 
     let windSpeedH1 = document.createElement("h1")
-    windSpeedH1.textContent = `N${wind_Speed}Km/h`
+    windSpeedH1.textContent = `${wind_Speed}m/s`
 
 
 
@@ -237,14 +241,21 @@ function weatherIcons(weatherInfo, weatherIconDisplay, weatherDescription){
     let clearSky = document.createElement("i")
     clearSky.classList.add("fa-solid", "fa-cloud-sun")
 
+    let brokenCloud = document.createElement("i")
+    brokenCloud.classList.add("fa-solid", "fa-cloud-meatball")
+
 
     weatherIconDisplay.classList.remove("fa-cloud-moon-rain","fa-cloud-showers-heavy", "fa-cloud-rain", "fa-cloud", "fa-cloud-sun")
 
     weatherDescription = weatherInfo.weather[0].description
     // weatherDescription = weatherDescription.toUpperCase()
 
-    if(weatherDescription.includes("overcast clouds" || "broken clouds")){
+    if(weatherDescription.includes("overcast clouds")){
         weatherIconDisplay.classList.add("fa-cloud")
+    }else if(weatherDescription.includes("broken clouds")){
+        weatherIconDisplay.classList.add("fa-cloud-meatball")
+    }else if(weatherDescription.includes("few clouds")){
+        weatherIconDisplay.classList.add("fa-cloud-meatball")
     }else if(weatherDescription.includes("light rain")){
         weatherIconDisplay.classList.add( "fa-cloud-moon-rain")
     }else if(weatherDescription.includes("heavy rain")){
@@ -254,6 +265,7 @@ function weatherIcons(weatherInfo, weatherIconDisplay, weatherDescription){
     }else if(weatherDescription.includes("clear sky")){
         weatherIconDisplay.classList.add("fa-cloud-sun")
     }
+
 
     
 }
