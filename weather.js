@@ -13,7 +13,7 @@ function cityValidation() {
   if (cityName === "") {
     inputAlert.textContent = "City name cannot be empty.";
     return false;
-  } else if (!cityName.match(/^[a-zA-Z\s\-]+$/)) {
+  } else if (!cityName.match(cityRegex)) {
     inputAlert.textContent =
       "City name can only contain letters, spaces, and hyphens.";
     return false;
@@ -27,7 +27,9 @@ form.addEventListener("submit", weatherDisplay);
 
 function weatherDisplay(event) {
   event.preventDefault();
+
   let isCityValid = cityValidation();
+
   if (isCityValid) {
     let city = cityInput.value;
     weatherAccess(city);
@@ -39,19 +41,6 @@ function getCountryName(countryCode) {
   return countryNames[countryCode] || countryCode;
 }
 
-// function weatherAccess(city){
-//     let APIKey = "92d239cf9f46ef82bf25cb75e15b6e1f"
-//     let endPoint = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${APIKey}`
-
-//     fetch(endPoint).then(res => {
-//         return res.json()
-//     }).then(weatherInfo => {
-//         return printDataOnUI(weatherInfo)
-//     }).catch(error => {
-//         console.log("error fetching data");
-//     })
-// }
-
 async function weatherAccess(city) {
   let APIKey = "92d239cf9f46ef82bf25cb75e15b6e1f";
   let endPoint = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${APIKey}`;
@@ -59,6 +48,7 @@ async function weatherAccess(city) {
   try {
     const res = await fetch(endPoint);
     const weatherInfo = await res.json();
+    weatherInfo.sys.country = getCountryName(weatherInfo.sys.country);
     printDataOnUI(weatherInfo);
   } catch (error) {
     console.log("error fetching data");
@@ -71,7 +61,6 @@ function printDataOnUI(weatherInfo) {
   wrapper.innerHTML = "";
   weatherDetails.innerHTML = "";
 
-  console.log(weatherInfo);
   let temperature = weatherInfo.main.temp;
   let convTemp = temperature - 273.15;
   convTemp = (temperature - 273.15).toFixed();
@@ -83,8 +72,6 @@ function printDataOnUI(weatherInfo) {
   let weatherDescription = weatherInfo.weather[0].description;
   // weatherDescription = weatherDescription.toUpperCase()
 
-  console.log(weatherDescription);
-
   let humidity = weatherInfo.main.humidity;
   humidity = humidity.toFixed();
 
@@ -93,8 +80,6 @@ function printDataOnUI(weatherInfo) {
   convFeel = (temperature - 275.15).toFixed();
 
   let wind_Speed = weatherInfo.wind.speed;
-
-  console.log(cityName);
 
   let dateTime_container = document.createElement("div");
   dateTime_container.classList.add("dateTime_container");
@@ -232,8 +217,6 @@ function weatherFunction(weatherInfo) {
   } else {
     background.classList.add("main-container");
   }
-
-  console.log(weatherBackground);
 }
 
 // Weather Icons
@@ -277,6 +260,8 @@ function weatherIcons(weatherInfo, weatherIconDisplay, weatherDescription) {
     weatherIconDisplay.classList.add("fa-cloud-moon-rain");
   } else if (weatherDescription.includes("heavy rain")) {
     weatherIconDisplay.classList.add("fa-cloud-showers-heavy");
+  } else if (weatherDescription.includes("heavy intensity rain")) {
+    weatherIconDisplay.classList.add("fa-cloud-showers-water");
   } else if (weatherDescription.includes("moderate rain")) {
     weatherIconDisplay.classList.add("fa-cloud-rain");
   } else if (weatherDescription.includes("clear sky")) {
@@ -556,3 +541,16 @@ const countryNames = {
 // }
 
 // weatherAcess()
+
+// function weatherAccess(city){
+//     let APIKey = "92d239cf9f46ef82bf25cb75e15b6e1f"
+//     let endPoint = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${APIKey}`
+
+//     fetch(endPoint).then(res => {
+//         return res.json()
+//     }).then(weatherInfo => {
+//         return printDataOnUI(weatherInfo)
+//     }).catch(error => {
+//         console.log("error fetching data");
+//     })
+// }
